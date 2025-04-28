@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: spring-ai-neo4j
+  ai:
+    openai:
+      api-key: ${GROQ_API_KEY}
+      base-url: https://api.groq.com/openai
+      chat:
+        options:
+          model: gemma2-9b-it
+    vectorstore:
+      neo4j:
+        embedding-dimension: 768
+        initialize-schema: true
+  neo4j:
+    uri: ${NEO4j_URI}
+    authentication:
+      username: ${NEO4J_USER}
+      password: ${NEO4J_PASSWORD}
+  threads:
+    virtual:
+      enabled: true
+  cloud:
+    azure:
+      storage:
+        account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
+        blob:
+          container-name: ${AZURE_BLOB_CONTAINER_NAME}
+          endpoint: ${AZURE_BLOB_ENDPOINT}
+        account-key: ${AZURE_STORAGE_ACCOUNT_KEY}
+logging:
+  level:
+    org:
+      springframework:
+        ai: trace
