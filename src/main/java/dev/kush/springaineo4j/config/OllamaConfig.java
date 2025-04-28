@@ -6,6 +6,7 @@ import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,6 +15,7 @@ import java.util.concurrent.Executors;
 public class OllamaConfig {
 
     @Bean
+    @Primary
     EmbeddingModel embeddingModel() {
         return OllamaEmbeddingModel
                 .builder()
@@ -27,6 +29,6 @@ public class OllamaConfig {
 
     @Bean
     ExecutorService executorService() {
-        return Executors.newVirtualThreadPerTaskExecutor();
+        return Executors.newFixedThreadPool(2);
     }
 }

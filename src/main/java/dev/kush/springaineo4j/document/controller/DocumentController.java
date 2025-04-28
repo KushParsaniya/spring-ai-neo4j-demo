@@ -47,7 +47,7 @@ public class DocumentController {
     public void processFile(@RequestParam("file") MultipartFile file) {
         try {
             byte[] fileContent = file.getBytes(); // Read file content into a byte array
-            executorService.submit(() -> etlService.extractAndTransformAndLoad(fileContent, file.getOriginalFilename()));
+            executorService.submit(() -> etlService.extractAndTransformAndLoadJob(fileContent, file.getOriginalFilename()));
         } catch (IOException e) {
             throw new RuntimeException("Failed to process file", e);
         }

@@ -7,4 +7,6 @@ public interface ETLService {
     void extractAndTransformAndLoad(MultipartFile file);
 
     void extractAndTransformAndLoad(byte[] fileContent, String fileName);
+
+    void extractAndTransformAndLoadJob(byte[] fileContent, String fileName);
 }

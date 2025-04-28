@@ -1,6 +1,7 @@
 spring:
   application:
     name: spring-ai-neo4j
+  # AI
   ai:
     openai:
       api-key: ${GROQ_API_KEY}
@@ -12,24 +13,41 @@ spring:
       neo4j:
         embedding-dimension: 768
         initialize-schema: true
+  # PostgreSQL
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:spring_ai_rag}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+
+  # Neo4j
   neo4j:
     uri: ${NEO4j_URI}
     authentication:
       username: ${NEO4J_USER}
       password: ${NEO4J_PASSWORD}
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
   threads:
     virtual:
       enabled: true
-  cloud:
-    azure:
-      storage:
-        account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
-        blob:
-          container-name: ${AZURE_BLOB_CONTAINER_NAME}
-          endpoint: ${AZURE_BLOB_ENDPOINT}
-        account-key: ${AZURE_STORAGE_ACCOUNT_KEY}
 logging:
   level:
     org:
       springframework:
         ai: trace
+
+azure:
+  storage:
+    connection-string: ${AZURE_STORAGE_CONNECTION_STRING}
+    container-name: ${AZURE_BLOB_CONTAINER_NAME}
+

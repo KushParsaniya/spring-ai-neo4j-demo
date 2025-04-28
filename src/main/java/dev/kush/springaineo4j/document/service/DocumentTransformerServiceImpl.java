@@ -1,5 +1,7 @@
 package dev.kush.springaineo4j.document.service;
 
+import dev.kush.springaineo4j.exception.KeywordMetadataEnricherException;
+import dev.kush.springaineo4j.exception.SummaryMetadataEnricherException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.model.ChatModel;
@@ -38,14 +40,14 @@ public class DocumentTransformerServiceImpl implements DocumentTransformerServic
             List<Document> finalDocuments = new ArrayList<>();
             for (Document document : documents) {
                 List<Document> enrichedDocuments = enricher.apply(List.of(document));
-                Thread.sleep(Duration.ofSeconds(5));
+                Thread.sleep(5000);
                 finalDocuments.addAll(enrichedDocuments);
             }
             log.info("DocumentTransformerServiceImpl :: keywordMetadataEnrichment :: end");
             return finalDocuments;
         } catch (Exception e) {
             log.error("DocumentTransformerServiceImpl :: keywordMetadataEnrichment :: error", e);
-            throw new RuntimeException("DocumentTransformerServiceImpl :: keywordMetadataEnrichment :: error", e);
+            throw new KeywordMetadataEnricherException("DocumentTransformerServiceImpl :: keywordMetadataEnrichment :: " + e.getMessage());
         }
     }
 
@@ -57,14 +59,14 @@ public class DocumentTransformerServiceImpl implements DocumentTransformerServic
             List<Document> finalDocuments = new ArrayList<>();
             for (Document document : documents) {
                 List<Document> enrichedDocuments = enricher.apply(List.of(document));
-//                Thread.sleep(Duration.ofSeconds(10));
+//                Thread.sleep(10000);
                 finalDocuments.addAll(enrichedDocuments);
             }
             log.info("DocumentTransformerServiceImpl :: summaryMetadataEnrichment :: end");
             return finalDocuments;
         } catch (Exception e) {
             log.error("DocumentTransformerServiceImpl :: summaryMetadataEnrichment :: error", e);
-            throw new RuntimeException("DocumentTransformerServiceImpl :: summaryMetadataEnrichment :: error", e);
+            throw new SummaryMetadataEnricherException("DocumentTransformerServiceImpl :: summaryMetadataEnrichment :: " +  e.getMessage());
         }
     }
 }
