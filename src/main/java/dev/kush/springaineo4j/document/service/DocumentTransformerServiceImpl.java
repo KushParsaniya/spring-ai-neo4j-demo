@@ -38,15 +38,21 @@ public class DocumentTransformerServiceImpl implements DocumentTransformerServic
             log.info("DocumentTransformerServiceImpl :: keywordMetadataEnrichment :: start");
             KeywordMetadataEnricher enricher = new KeywordMetadataEnricher(chatModel, 5);
             List<Document> finalDocuments = new ArrayList<>();
+            log.info("DocumentTransformerServiceImpl :: keywordMetadataEnrichment :: documents size : {}", documents.size());
             for (Document document : documents) {
-                List<Document> enrichedDocuments = enricher.apply(List.of(document));
-                Thread.sleep(5000);
-                finalDocuments.addAll(enrichedDocuments);
+                try {
+                    List<Document> enrichedDocuments = enricher.apply(List.of(document));
+                    finalDocuments.addAll(enrichedDocuments);
+                } catch (Exception e) {
+                    log.warn("DocumentTransformerServiceImpl :: keywordMetadataEnrichment :: error while enriching document : {}", e.getMessage());
+                    log.info("skipping enrichment for document : {}", document.getId());
+                    finalDocuments.add(document);
+                }
             }
             log.info("DocumentTransformerServiceImpl :: keywordMetadataEnrichment :: end");
             return finalDocuments;
         } catch (Exception e) {
-            log.error("DocumentTransformerServiceImpl :: keywordMetadataEnrichment :: error", e);
+            log.error("DocumentTransformerServiceImpl :: keywordMetadataEnrichment :: error ::" + e);
             throw new KeywordMetadataEnricherException("DocumentTransformerServiceImpl :: keywordMetadataEnrichment :: " + e.getMessage());
         }
     }
@@ -58,9 +64,14 @@ public class DocumentTransformerServiceImpl implements DocumentTransformerServic
             SummaryMetadataEnricher enricher = new SummaryMetadataEnricher(chatModel, List.of(NEXT, PREVIOUS, CURRENT));
             List<Document> finalDocuments = new ArrayList<>();
             for (Document document : documents) {
-                List<Document> enrichedDocuments = enricher.apply(List.of(document));
-//                Thread.sleep(10000);
-                finalDocuments.addAll(enrichedDocuments);
+                try {
+                    List<Document> enrichedDocuments = enricher.apply(List.of(document));
+                    finalDocuments.addAll(enrichedDocuments);
+                } catch (Exception e) {
+                    log.warn("DocumentTransformerServiceImpl :: summaryMetadataEnrichment :: error while enriching document : {}", e.getMessage());
+                    log.info("skipping enrichment for document : {}", document.getId());
+                    finalDocuments.add(document);
+                }
             }
             log.info("DocumentTransformerServiceImpl :: summaryMetadataEnrichment :: end");
             return finalDocuments;

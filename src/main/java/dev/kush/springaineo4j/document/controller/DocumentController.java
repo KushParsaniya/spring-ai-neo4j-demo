@@ -8,6 +8,7 @@ import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvi
 import org.springframework.ai.chat.client.advisor.vectorstore.VectorStoreChatMemoryAdvisor;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,5 +65,11 @@ public class DocumentController {
                 .call()
                 .content();
         return new ChatDto(chatId, response);
+    }
+
+    @GetMapping("/health")
+    @ResponseStatus(HttpStatus.OK)
+    public String health() {
+        return "OK";
     }
 }

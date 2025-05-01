@@ -24,6 +24,7 @@ import java.util.List;
 public class KeywordMetadataEnricherStepConfig {
 
     private final DocumentTransformerService documentTransformerService;
+    private final BatchUtils batchUtils;
 
     @Bean
     Step keywordMetadataEnricherStep(JobRepository jobRepository,
@@ -42,7 +43,7 @@ public class KeywordMetadataEnricherStepConfig {
             try {
                 log.info("KeywordMetadataEnricherStepConfig :: keywordMetadataEnricherTasklet :: Start");
                 @SuppressWarnings("unchecked")
-                List<Document> documents = (List<Document>) BatchUtils.getContext(chunkContext, ProjectConstant.TRANSFORM_DOCUMENTS);
+                List<Document> documents = batchUtils.getContext(chunkContext, ProjectConstant.TRANSFORM_DOCUMENTS);
                 if (documents == null || documents.isEmpty()) {
                     log.warn("KeywordMetadataEnricherStepConfig ::execute :: No documents to enrich");
                     return RepeatStatus.FINISHED;
@@ -52,12 +53,12 @@ public class KeywordMetadataEnricherStepConfig {
                     log.warn("KeywordMetadataEnricherStepConfig :: execute :: No documents found");
                     return RepeatStatus.FINISHED;
                 }
-                BatchUtils.putContext(chunkContext, ProjectConstant.KEYWORD_ENRICHMENT_DOCUMENTS, enrichedDocuments);
+                batchUtils.putContext(chunkContext, ProjectConstant.KEYWORD_ENRICHMENT_DOCUMENTS, enrichedDocuments);
                 log.info("KeywordMetadataEnricherStepConfig :: keywordMetadataEnricherTasklet :: End");
                 return RepeatStatus.FINISHED;
             } catch (Exception e) {
                 log.error("KeywordMetadataEnricherStepConfig :: keywordMetadataEnricherTasklet :: error", e);
-                return RepeatStatus.CONTINUABLE;
+                return RepeatStatus.FINISHED;
             }
         };
     }

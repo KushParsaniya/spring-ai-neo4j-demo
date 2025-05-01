@@ -1,5 +1,6 @@
 package dev.kush.springaineo4j.document.service;
 
+import dev.kush.springaineo4j.config.UserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.ExtractedTextFormatter;
@@ -21,7 +22,7 @@ public class DocumentReaderServiceImpl implements DocumentReaderService {
         log.info("DocumentReaderServiceImpl :: readTextDocuments :: start");
         TextReader textReader = new TextReader(resource);
         // TODO: USE username from security context
-        textReader.getCustomMetadata().put("username","kush");
+        textReader.getCustomMetadata().put("username", UserUtils.getCurrentUser());
         textReader.getCustomMetadata().put("source", fileName);
         log.info("DocumentReaderServiceImpl :: readTextDocuments :: end");
         return textReader.read();
@@ -44,8 +45,7 @@ public class DocumentReaderServiceImpl implements DocumentReaderService {
             List<Document> documents = paragraphPdfDocumentReader.read();
             for (Document document : documents) {
                 document.getMetadata().put("source", fileName);
-                // TODO: USE username from security context
-                document.getMetadata().put("username", "kush");
+                document.getMetadata().put("username", UserUtils.getCurrentUser());
             }
             log.info("DocumentReaderServiceImpl :: readPdfDocuments :: end");
             return documents;
@@ -75,7 +75,7 @@ public class DocumentReaderServiceImpl implements DocumentReaderService {
         for (Document document : documents) {
             document.getMetadata().put("source", fileName);
             // TODO: USE username from security context
-            document.getMetadata().put("username", "kush");
+            document.getMetadata().put("username", UserUtils.getCurrentUser());
         }
         log.info("DocumentReaderServiceImpl :: readPagePdfDocument :: end");
         return documents;

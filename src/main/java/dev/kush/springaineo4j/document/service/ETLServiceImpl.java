@@ -53,14 +53,15 @@ public class ETLServiceImpl implements ETLService {
     public void extractAndTransformAndLoad(byte[] fileContent, String fileName) {
         Resource resource;
         Path path = null;
-        List<Document> documents = new ArrayList<>();
+        List<Document> documents;
         try {
             resource = new ByteArrayResource(fileContent);
             path = Files.createTempFile("temp-",fileName);
             Files.write(path, fileContent);
             documents = readFile(fileName, resource);
-
-            documents = documentTransformerService.transformTextDocuments(documents);
+            if (FilenameUtils.getExtension(fileName).equalsIgnoreCase("txt")) {
+                documents = documentTransformerService.transformTextDocuments(documents);
+            }
             documents = documentTransformerService.keywordMetadataEnrichment(documents);
             documents = documentTransformerService.summaryMetadataEnrichment(documents);
             documentWriterService.writeDocuments(documents);
@@ -77,11 +78,8 @@ public class ETLServiceImpl implements ETLService {
 
     @Override
     public void extractAndTransformAndLoadJob(byte[] fileContent, String fileName) {
-        Resource resource;
         Path path = null;
-        List<Document> documents = new ArrayList<>();
         try {
-            resource = new ByteArrayResource(fileContent);
             path = Files.createTempFile("temp-",fileName);
             Files.write(path, fileContent);
             JobParameters jobParameters = new JobParametersBuilder()

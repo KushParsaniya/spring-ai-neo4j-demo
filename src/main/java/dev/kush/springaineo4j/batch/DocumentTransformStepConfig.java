@@ -24,6 +24,7 @@ import java.util.List;
 public class DocumentTransformStepConfig {
 
     private final DocumentTransformerService documentTransformerService;
+    private final BatchUtils batchUtils;
 
     @Bean
     Step documentTransformStep(JobRepository jobRepository,
@@ -41,8 +42,7 @@ public class DocumentTransformStepConfig {
         return (contribution, chunkContext) -> {
             try {
                 log.info("documentTransformTasklet :: execute :: start");
-                @SuppressWarnings("unchecked")
-                List<Document> documents = (List<Document>) BatchUtils.getContext(chunkContext, ProjectConstant.READ_DOCUMENTS);
+                List<Document> documents = batchUtils.getContext(chunkContext, ProjectConstant.READ_DOCUMENTS);
                 if (documents == null || documents.isEmpty()) {
                     log.warn("No documents to transform");
                     return RepeatStatus.FINISHED;
@@ -52,12 +52,12 @@ public class DocumentTransformStepConfig {
                     log.warn("documentTransformTasklet :: execute :: No documents found");
                     return RepeatStatus.FINISHED;
                 }
-                BatchUtils.putContext(chunkContext, ProjectConstant.TRANSFORM_DOCUMENTS, transformedDocuments);
+                batchUtils.putContext(chunkContext, ProjectConstant.TRANSFORM_DOCUMENTS, transformedDocuments);
                 log.info("documentTransformTasklet :: execute :: end");
                 return RepeatStatus.FINISHED;
             } catch (Exception e) {
                 log.error("documentTransformTasklet :: execute :: error", e);
-                return RepeatStatus.CONTINUABLE;
+                return RepeatStatus.FINISHED;
             }
         };
     }

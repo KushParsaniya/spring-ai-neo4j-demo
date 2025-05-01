@@ -37,17 +37,27 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
-  threads:
-    virtual:
-      enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/polarbookshop
+#  threads:
+#    virtual:
+#      enabled: true
 logging:
   level:
     org:
       springframework:
         ai: trace
+        security: trace
 
 azure:
   storage:
     connection-string: ${AZURE_STORAGE_CONNECTION_STRING}
     container-name: ${AZURE_BLOB_CONTAINER_NAME}
+
+server:
+  port: 8081
+
 

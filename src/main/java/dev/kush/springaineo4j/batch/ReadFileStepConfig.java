@@ -31,6 +31,7 @@ public class ReadFileStepConfig {
 
     private final DocumentReaderService documentReaderService;
     private final ResourceLoader resourceLoader;
+    private final BatchUtils batchUtils;
 
     private List<Document> readFile(String filename, Resource resource) {
         return switch (FilenameUtils.getExtension(filename)) {
@@ -71,12 +72,12 @@ public class ReadFileStepConfig {
                     log.warn("readFileTasklet :: execute :: No documents found");
                     return RepeatStatus.FINISHED;
                 }
-                BatchUtils.putContext(chunkContext, ProjectConstant.READ_DOCUMENTS, documents);
+                batchUtils.putContext(chunkContext, ProjectConstant.READ_DOCUMENTS, documents);
                 log.info("readFileTasklet :: execute :: end");
                 return RepeatStatus.FINISHED;
             } catch (Exception e) {
                 log.error("readFileTasklet :: execute :: error: {}", e.getMessage());
-                return RepeatStatus.CONTINUABLE;
+                return RepeatStatus.FINISHED;
             }
         };
     }

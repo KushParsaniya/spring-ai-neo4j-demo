@@ -24,6 +24,7 @@ import java.util.List;
 public class SummaryMetadataEnricherStepConfig {
     
     private final DocumentTransformerService documentTransformerService;
+    private final BatchUtils batchUtils;
     
     @Bean
     Step summaryMetadataEnricherStep(JobRepository jobRepository,
@@ -41,8 +42,7 @@ public class SummaryMetadataEnricherStepConfig {
         return (contribution, chunkContext) -> {
             try {
                 log.info("summaryMetadataEnricherStepConfig :: summaryMetadataEnricherTasklet :: Start");
-                @SuppressWarnings("unchecked")
-                List<Document> documents = (List<Document>) BatchUtils.getContext(chunkContext, ProjectConstant.TRANSFORM_DOCUMENTS);
+                List<Document> documents = (List<Document>) batchUtils.getContext(chunkContext, ProjectConstant.TRANSFORM_DOCUMENTS);
                 if (documents == null || documents.isEmpty()) {
                     log.warn("summaryMetadataEnricherStepConfig ::execute :: No documents to enrich");
                     return RepeatStatus.FINISHED;
@@ -52,12 +52,12 @@ public class SummaryMetadataEnricherStepConfig {
                     log.warn("summaryMetadataEnricherStepConfig :: execute :: No documents found");
                     return RepeatStatus.FINISHED;
                 }
-                BatchUtils.putContext(chunkContext, ProjectConstant.SUMMARY_ENRICHMENT_DOCUMENTS, enrichedDocuments);
+                batchUtils.putContext(chunkContext, ProjectConstant.SUMMARY_ENRICHMENT_DOCUMENTS, enrichedDocuments);
                 log.info("summaryMetadataEnricherStepConfig :: summaryMetadataEnricherTasklet :: End");
                 return RepeatStatus.FINISHED;
             } catch (Exception e) {
                 log.error("summaryMetadataEnricherStepConfig :: summaryMetadataEnricherTasklet :: error", e);
-                return RepeatStatus.CONTINUABLE;
+                return RepeatStatus.FINISHED;
             }
         };
     }

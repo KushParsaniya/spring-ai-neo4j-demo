@@ -24,6 +24,7 @@ import java.util.List;
 public class DocumentWriterStepConfig {
 
     private final DocumentWriterService documentWriterService;
+    private final BatchUtils batchUtils;
 
     @Bean
     Step documentWriteStep(JobRepository jobRepository,
@@ -41,8 +42,7 @@ public class DocumentWriterStepConfig {
         return (contribution, chunkContext) -> {
             try {
                 log.info("documentWriteStepConfig :: documentWriteTasklet :: Start");
-                @SuppressWarnings("unchecked")
-                List<Document> documents = (List<Document>) BatchUtils.getContext(chunkContext, ProjectConstant.TRANSFORM_DOCUMENTS);
+                List<Document> documents = batchUtils.getContext(chunkContext, ProjectConstant.TRANSFORM_DOCUMENTS);
                 if (documents == null || documents.isEmpty()) {
                     log.warn("documentWriteStepConfig ::execute :: No documents to enrich");
                     return RepeatStatus.FINISHED;
@@ -52,7 +52,7 @@ public class DocumentWriterStepConfig {
                 return RepeatStatus.FINISHED;
             } catch (Exception e) {
                 log.error("documentWriteStepConfig :: documentWriteTasklet :: error", e);
-                return RepeatStatus.CONTINUABLE;
+                return RepeatStatus.FINISHED;
             }
         };
     }
