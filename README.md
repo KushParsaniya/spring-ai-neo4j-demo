@@ -4,6 +4,8 @@ Welcome to **Spring AI Neo4j ETL Pipeline** — a powerful Spring Boot-based pro
 
 This project uses **Groq OpenAI** and **Local Ollama** models for **text extraction**, **chunking**, **metadata enrichment** (like keywords, summaries), and **vector embedding** using **Nomic Embedding models**.
 
+Deepwiki link: [spring-ai-neo4j-demo](https://deepwiki.com/KushParsaniya/spring-ai-neo4j-demo)
+
 ---
 
 ## ✨ Features
